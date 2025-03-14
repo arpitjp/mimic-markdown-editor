@@ -8,10 +8,18 @@ html, body, #webview-vditor {
   width: 100%;
 }
 
-body[data-use-vscode-theme-color="1"] .vditor {
+.vditor-toolbar {
+  display: none;
+}
+
+.vditor {
   --panel-background-color: var(--vscode-editor-background);
   --toolbar-background-color: var(--vscode-editor-background);
   --textarea-background-color: var(--vscode-editor-background);
+}
+.vditor-ir table td, 
+.vditor-ir table th {
+  background-color: var(--vscode-editor-background) !important;
 }
 
 /* fix font family */
@@ -21,7 +29,7 @@ body[data-use-vscode-theme-color="1"] .vditor {
 
 /* fix code block color in dark mode */
 .vditor--dark .vditor-reset code:not(.hljs):not(.highlight-chroma) {
-  background-color: rgba(66,133,244,.1);
+  background-color: var(--vscode-editor-background);
 }
 
 /* fix outline toolbar padding */

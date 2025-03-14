@@ -1,35 +1,72 @@
 import vditor from "vditor";
 import "vditor/dist/index.css";
 import "./index.css";
-import { Message } from "../global";
+import { ExtensionMessage, WebviewMessage } from "../global";
+import { fixTextCut } from "./utils";
+import { debounce, debug } from "../utils";
+
+let editor: vditor;
+let vscode: any;
+
+const sendMsgToExtension = (msg: WebviewMessage) => {
+  vscode.postMessage(msg);
+};
+
+const syncTextEdit = () => {
+  sendMsgToExtension({ type: "updateText", text: editor.getValue() });
+};
 
 const initVditor = () => {
-  window.vditor = new vditor("webview-vditor", {
+  if (editor) {
+    editor.destroy();
+  }
+
+  // Webviews are normally torn down when not visible and re-created when they become visible again.
+	// State lets us save information across these re-loads
+  const state = vscode.getState();
+  
+  const isDarkTheme = document.body.classList.contains("vscode-dark");
+  const theme = isDarkTheme ? "dark" : "classic";
+  debug("isDarktheme", isDarkTheme);
+
+  editor = new vditor("webview-vditor", {
     width: "100%",
     height: "100%",
     lang: "en_US",
-    value: "",
+    theme,
+    preview: {
+      actions: [],
+      hljs: {
+        style: `github${isDarkTheme ? "-dark" : ""}`,
+      },
+      mode: "both",
+      theme: {
+        current: theme,
+      },
+    },
+    value: state?.text || "",
+    outline: {
+      enable: true,
+      position: "right",
+    },
     mode: "ir",
-    // value: "",
-    // cache: { enable: false },
+    cache: { enable: false },
     toolbarConfig: { pin: true },
-    // after() { },
-    // input() { },
-    // upload: {},
+    input: debounce(syncTextEdit),
   });
 };
 
 const updateContentInVditor = (text: string) => {
-  window.vditor.setValue(text);
-  // Then persist state information.
+  // Persist state information.
   // This state is returned in the call to `vscode.getState` below when a webview is reloaded.
-  window.vscode.setState({ text });
+  vscode.setState({ text });
+  editor.setValue(text);
 };
 
 const setupEventListeners = () => {
-  window.addEventListener("message", ({ data: message }: { data: Message }) => {
+  window.addEventListener("message", ({ data: message }: { data: ExtensionMessage }) => {
 		switch (message.type) {
-			case "update":
+			case "updateText":
 				updateContentInVditor(message.text);
 				return;
 		}
@@ -38,18 +75,13 @@ const setupEventListeners = () => {
 
 // IIAF
 (() => {
+  fixTextCut();
+
   // Get a reference to the VS Code webview api.
-	// We use this API to post messages back to our extension.
 	// @ts-ignore
-  window.vscode = acquireVsCodeApi();
+  vscode = acquireVsCodeApi();
 
   initVditor();
-  setupEventListeners();
 
-  // Webviews are normally torn down when not visible and re-created when they become visible again.
-	// State lets us save information across these re-loads
-	const state = window.vscode.getState();
-	if (state) {
-		updateContentInVditor(state.text);
-	}
+  setupEventListeners();
 })();

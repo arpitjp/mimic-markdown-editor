@@ -1,15 +1,15 @@
-import vditor from "vditor";
-
-// extending window with vditor instance
-declare global {
-  interface Window {
-    vditor: vditor;
-    vscode: any;
-  }
+/**
+ * Message obj will be passed from VSCode extension to Webview
+ */
+export interface ExtensionMessage {
+  type: "updateText";
+  [key: string]: any; // Allows additional properties of any type
 }
 
-// Message object will to passed b/w VSCode text document & webview
-export interface Message {
-  type: "update",
-  [key: string]: any; // Allows additional properties of any type
+/**
+ * Message obj will be passed from Webview to VSCode extension
+ */
+export interface WebviewMessage {
+  type: "updateText";
+  [key: string]: any;  // Allows additional properties of any type
 }
