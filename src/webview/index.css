@@ -12,6 +12,12 @@ html, body, #webview-vditor {
   display: none;
 }
 
+/* Hide code block preview when editing
+https://github.com/Vanessa219/vditor/issues/1634#issuecomment-2210367362 */
+.vditor-ir__node--expand[data-type="code-block"] .vditor-ir__preview {
+    display: none;
+}
+
 .vditor {
   --panel-background-color: var(--vscode-editor-background);
   --toolbar-background-color: var(--vscode-editor-background);
