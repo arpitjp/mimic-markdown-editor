@@ -3,7 +3,7 @@
   "displayName": "Mimic Markdown Editor (WYSIWYG)",
   "description": "",
   "version": "0.0.2",
-  "icon": "https://github.com/user-attachments/assets/2480f8d1-00ef-4fca-9433-676bd09add01",
+  "icon": "docs/mimic.png",
   "engines": {
     "vscode": "^1.98.0"
   },
