@@ -20,12 +20,18 @@ const syncTextEdit = () => {
 /**
  * Prevents vditor from wrapping multi-line text in code block
  */
-const fixPaste = () => {
+const fixTextPaste = () => {
   editor.vditor.ir?.element.addEventListener("paste", (e) => {
+    const clipboardData = e.clipboardData || (window as any).clipboardData;
+    if (!clipboardData?.types?.includes("text")) {
+      return;
+    }
+
+    // only skip default vditor behavior for text paste
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
-    const text = (e.clipboardData || (window as any).clipboardData)?.getData("text/plain");
+    const text = clipboardData?.getData("text/plain");
     text && editor.insertValue(text);
   }, true);
 };
@@ -70,7 +76,7 @@ const initVditor = () => {
     toolbarConfig: { pin: true },
     input: debounce(syncTextEdit),
     after() {
-      fixPaste();
+      fixTextPaste();
     },
     upload: {
       // Pasting an image without url parameters cannot be uploaded see: https://github.com/Vanessa219/vditor/blob/d7628a0a7cfe5d28b055469bf06fb0ba5cfaa1b2/src/ts/util/fixBrowserBehavior.ts#L1409
