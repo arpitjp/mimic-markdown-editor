@@ -2,7 +2,7 @@
  * Message obj will be passed from VSCode extension to Webview
  */
 export interface ExtensionMessage {
-  type: "updateText";
+  type: "updateText" | "uploadComplete";
   [key: string]: any; // Allows additional properties of any type
 }
 
@@ -10,6 +10,6 @@ export interface ExtensionMessage {
  * Message obj will be passed from Webview to VSCode extension
  */
 export interface WebviewMessage {
-  type: "updateText";
+  type: "updateText" | "upload" | "open-link";
   [key: string]: any;  // Allows additional properties of any type
 }

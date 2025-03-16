@@ -9,13 +9,22 @@ html, body, #webview-vditor {
 }
 
 .vditor-toolbar {
-  display: none;
+  display: var(--vditor-toolbar-display);
+}
+
+.vditor-outline {
+  width: var(--vditor-outline-width);
 }
 
 /* Hide code block preview when editing
 https://github.com/Vanessa219/vditor/issues/1634#issuecomment-2210367362 */
 .vditor-ir__node--expand[data-type="code-block"] .vditor-ir__preview {
     display: none;
+}
+
+.vditor-ir__node[data-type="code-block"] {
+  margin-top: -10px;
+  margin-bottom: 10px;
 }
 
 .vditor {

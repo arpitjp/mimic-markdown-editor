@@ -19,7 +19,7 @@ export const debug = function (...args: any) {
   }
 
   // @ts-ignore
-  if (window?.isDebugMode) {
+  if (window?.extensionConfigs?.isDebugMode) {
     console.log("MIMIC (webview):\t", ...args);
   }
 };

@@ -1,6 +1,6 @@
 {
   "name": "mimic-markdown-editor",
-  "displayName": "mimic-markdown-editor",
+  "displayName": "Mimic Markdown Editor (WYSIWYG)",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -25,6 +25,73 @@
         ]
       }
     ],
+    "configuration": {
+      "title": "mimic-markdown-editor",
+      "properties": {
+        "mimic-markdown-editor.assetsFolder": {
+          "type": "string",
+          "default": "assets",
+          "title": "Assets folder",
+          "description": "Assets added to markdown will get saved in this folder. Default path is relative to the markdown file. You can set to project root via `${projectRoot}/assets`."
+        },
+        "mimic-markdown-editor.tableOfContents": {
+          "type": "object",
+			    "title": "Table of contents",
+          "default": {
+            "show": true,
+            "position": "right",
+            "width": "200px"
+          },
+          "properties": {
+            "show": {
+              "type": "boolean",
+              "title": "Show panel",
+              "description": "Show side panel containing table of contents"
+            },
+            "position": {
+              "type": "string",
+              "title": "Position",
+              "enum": [
+								"left",
+                "right"
+							]
+            },
+            "width": {
+              "type": "string",
+              "title": "Panel width",
+              "description": "CSS width. Ex: '100px', '20%'"
+            }
+          }
+        },
+        "mimic-markdown-editor.imageDefaultConfig": {
+          "type": "object",
+			    "title": "Image Default Config",
+          "properties": {
+            "width": {
+              "type": "string",
+              "title": "Width",
+              "description": "CSS width"
+            },
+            "height": {
+              "type": "string",
+              "title": "Height",
+              "description": "CSS height"
+            }
+          }
+        },
+        "mimic-markdown-editor.showToolbar": {
+          "type": "boolean",
+          "default": false,
+          "title": "Show vditor toolbar"
+        },
+        "mimic-markdown-editor.customCss": {
+          "title": "Custom CSS path",
+          "type": "string",
+          "description": "Ex: '.vditor-ir pre.vditor-reset {line-height: 32px;}'",
+          "default": ""
+        }
+      }
+    },
     "commands": []
   },
   "scripts": {
@@ -55,6 +122,6 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "vditor": "^3.10.9"
+    "vditor": "file:../vditor"
   }
 }

@@ -1,4 +1,4 @@
-# mimic-markdown-editor README
+# README
 
 ## Dev setup
 1. Install node modules: `npm i`
