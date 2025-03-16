@@ -59,15 +59,12 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     });
   };
 
-  #getExtensionConfigs = () => {
-    let a = "";
-    return {
-      isDebugMode: isDebugMode(),
-      tableOfContents: MarkdownEditorProvider.config.get<any>("tableOfContents"),
-      showToolbar: MarkdownEditorProvider.config.get<any>("showToolbar"),
-      imageDefaultConfig: MarkdownEditorProvider.config.get<any>("imageDefaultConfig"),
-    };
-  };
+  #getExtensionConfigs = () => ({
+    isDebugMode: isDebugMode(),
+    tableOfContents: MarkdownEditorProvider.config.get<any>("tableOfContents"),
+    showToolbar: MarkdownEditorProvider.config.get<any>("showToolbar"),
+    imageDefaultConfig: MarkdownEditorProvider.config.get<any>("imageDefaultConfig"),
+  });
   
   #getHtmlForWebview = (): string => {
     const toUri = (f: string) =>
@@ -157,7 +154,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
               path.join(assetsFolder, f.name)
             ).replace(/\\/g, "/")
           );
-          
+
           this.#sendMsgToWebView({
             type: "uploadComplete",
             files,
