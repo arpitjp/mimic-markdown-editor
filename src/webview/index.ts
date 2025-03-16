@@ -62,7 +62,7 @@ const initVditor = () => {
     },
     value: state?.text || "",
     outline: {
-      enable: configs?.tableOfContents?.show,
+      enable: true,
       position: configs?.tableOfContents?.position,
     },
     mode: "ir",
@@ -147,7 +147,7 @@ const setupEventListeners = () => {
 
 const setCSSVars = () => {
   document.documentElement.style.setProperty("--vditor-toolbar-display", configs?.showToolbar ? "initial" : "none");
-  document.documentElement.style.setProperty("--vditor-outline-width", configs?.tableOfContents?.width);
+  document.documentElement.style.setProperty("--vditor-outline-width", configs?.tableOfContents?.width || 0);
 };
 
 const fixLinkClick = () => {
