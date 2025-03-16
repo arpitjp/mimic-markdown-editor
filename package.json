@@ -32,7 +32,7 @@
       }
     ],
     "configuration": {
-      "title": "mimic-markdown-editor",
+      "title": "Mimic Markdown Editor (WYSIWYG)",
       "properties": {
         "mimic-markdown-editor.assetsFolder": {
           "type": "string",
