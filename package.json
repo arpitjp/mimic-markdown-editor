@@ -6,6 +6,7 @@
   "engines": {
     "vscode": "^1.98.0"
   },
+  "publisher": "arpitjp",
   "categories": [
     "Other"
   ],
@@ -36,7 +37,7 @@
         },
         "mimic-markdown-editor.tableOfContents": {
           "type": "object",
-			    "title": "Table of contents",
+          "title": "Table of contents",
           "default": {
             "show": true,
             "position": "right",
@@ -52,9 +53,9 @@
               "type": "string",
               "title": "Position",
               "enum": [
-								"left",
+                "left",
                 "right"
-							]
+              ]
             },
             "width": {
               "type": "string",
@@ -65,7 +66,7 @@
         },
         "mimic-markdown-editor.imageDefaultConfig": {
           "type": "object",
-			    "title": "Image Default Config",
+          "title": "Image Default Config",
           "properties": {
             "width": {
               "type": "string",
@@ -122,6 +123,6 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "vditor": "file:../vditor"
+    "vditor": "^3.10.9"
   }
 }
