@@ -51,3 +51,9 @@ export const handleInternalLinkClick = (href: string) => {
   const theChosenOne = Array.from(spans).find(s => convertToMarkdownLink(s.textContent || "") === href);
   (theChosenOne as HTMLElement)?.click();
 };
+
+export const debug = (...args: any) => {
+  if ((window as any)?.extensionConfigs?.isDebugMode) {
+    console.log("MIMIC (webview):\t", ...args);
+  }
+};

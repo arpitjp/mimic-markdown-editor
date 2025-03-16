@@ -2,8 +2,8 @@ import vditor from "vditor";
 import "vditor/dist/index.css";
 import "./index.css";
 import { ExtensionMessage, WebviewMessage } from "../global";
-import { fileToBase64, fixTextOperations, getFormattedDate, handleInternalLinkClick } from "./utils";
-import { debounce, debug } from "../utils";
+import { fileToBase64, fixTextOperations, getFormattedDate, handleInternalLinkClick, debug } from "./utils";
+import { debounce } from "../utils";
 
 let editor: vditor;
 let vscode: any;

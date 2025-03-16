@@ -13,13 +13,8 @@ export const isDebugMode = () => debugMode;
 export const setDebugMode = (val: boolean) => debugMode = val; 
 
 export const debug = function (...args: any) {
-  if (isDebugMode()) {
-    console.log("MIMIC:\t", ...args);
+  if (!isDebugMode()) {
     return;
   }
-
-  // @ts-ignore
-  if (window?.extensionConfigs?.isDebugMode) {
-    console.log("MIMIC (webview):\t", ...args);
-  }
+  console.log("MIMIC:\t", ...args);
 };
