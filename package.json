@@ -2,8 +2,8 @@
   "name": "mimic-markdown-editor",
   "displayName": "Mimic Markdown Editor (WYSIWYG)",
   "description": "",
-  "version": "0.0.3",
-  "icon": "docs/mimic.png",
+  "version": "0.0.4",
+  "icon": "docs/mimic-1.png",
   "engines": {
     "vscode": "^1.98.0"
   },
@@ -88,6 +88,7 @@
         "mimic-markdown-editor.showToolbar": {
           "type": "boolean",
           "default": false,
+          "description": "Toolbar is hidden by default",
           "title": "Show vditor toolbar"
         },
         "mimic-markdown-editor.customCss": {
