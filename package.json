@@ -7,6 +7,10 @@
     "vscode": "^1.98.0"
   },
   "publisher": "arpitjp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arpitjp/mimic-markdown-editor.git"
+  },
   "categories": [
     "Other"
   ],
