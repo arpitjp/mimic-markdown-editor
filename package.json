@@ -2,8 +2,8 @@
   "name": "mimic-markdown-editor",
   "displayName": "Mimic Markdown Editor (WYSIWYG)",
   "description": "",
-  "version": "0.0.495",
-  "icon": "docs/icons/style.png",
+  "version": "0.0.496",
+  "icon": "docs/icons/2.2.png",
   "engines": {
     "vscode": "^1.98.0"
   },
