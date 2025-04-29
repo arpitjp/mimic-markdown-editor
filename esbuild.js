@@ -36,7 +36,14 @@ async function main() {
 		sourcesContent: false,
 		platform: "node",
 		outdir: "dist",
-		external: ["vscode"],
+    external: ["vscode"],
+    loader: {
+      ".png": "file",
+      ".woff": "file",
+      ".woff2": "file",
+      ".ttf": "file",
+      ".css": "css",
+    },
 		logLevel: "silent",
 		plugins: [
 			/* add to the end of plugins array */

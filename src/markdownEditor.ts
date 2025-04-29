@@ -102,7 +102,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     </head>
 
     <body>
-      <div id="webview-vditor"></div>
+      <div id="webview-editor"></div>
 
       ${jsFiles.map((f) => `<script type="module" src="${f}"></script>`).join("\n")}
     </body>

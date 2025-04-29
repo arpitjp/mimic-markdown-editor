@@ -3,7 +3,7 @@ body {
   padding: 0;
 }
 
-html, body, #webview-vditor {
+html, body, #webview-editor {
   height: 100%;
   width: 100%;
 }
