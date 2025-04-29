@@ -98,11 +98,14 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
 
       <script>
         window.extensionConfigs = JSON.parse('${JSON.stringify(configs)}');
+        window.vscodeBaseHref = "${baseHref}";
       </script>
     </head>
 
     <body>
-      <div id="webview-vditor"></div>
+      <div class="editor-container">
+        <div id="editor"></div>
+      </div>
 
       ${jsFiles.map((f) => `<script type="module" src="${f}"></script>`).join("\n")}
     </body>

@@ -57,3 +57,29 @@ export const debug = (...args: any) => {
     console.log("MIMIC (webview):\t", ...args);
   }
 };
+
+// Muya loads images via `new Image().src = ...`, which ignores <base href> in the webview.
+// This monkey-patches the Image.prototype.src setter to rewrite relative and file:// URLs using `window.vscodeBaseHref` for proper resolution.
+export const fixImageBaseHref = () => {
+  const baseUri = (window as any).vscodeBaseHref;
+  const original = Object.getOwnPropertyDescriptor(Image.prototype, "src");
+  if (!original?.set) {
+    return;
+  };
+
+  Object.defineProperty(Image.prototype, "src", {
+    set(url) {
+      if (url.startsWith("file://")) {
+        // Strip the scheme and resolve relative to the baseUri
+        const relativePath = url.replace(/^file:\/\/+/, "").replace(/^\.?\//, "");
+        url = `${baseUri}${relativePath}`;
+      } else if (!/^https?:|^data:|^blob:/.test(url)) {
+        // Also rewrite any other relative URLs
+        url = `${baseUri}${url.replace(/^\.?\//, "")}`;
+      }
+      original.set!.call(this, url);
+    },
+    get: original.get,
+    configurable: true,
+  });
+};
