@@ -24,7 +24,7 @@ import { debounce } from "../utils";
 // let editor: vditor;
 let muya: Muya;
 let vscode: any;
-// let configs: any = {};
+let configs: any = {};
 
 const sendMsgToExtension = (msg: WebviewMessage) => {
   vscode.postMessage(msg);
@@ -57,9 +57,7 @@ const initMuya = () => {
   // Webviews are normally torn down when not visible and re-created when they become visible again.
 	// State lets us save information across these re-loads
   const state = vscode.getState();
- 
-  // configs = ((window as any)?.extensionConfigs);
-  
+   
   const isDarkTheme = document.body.classList.contains("vscode-dark");
   // const theme = isDarkTheme ? "dark" : "classic";
   debug("isDarktheme", isDarkTheme);
@@ -90,6 +88,15 @@ const initMuya = () => {
   });
   muya.locale(en);
   muya.init();
+
+  // fix image src
+  muya.editor.inlineRenderer.renderer.urlMap.get = function (key) {
+    const baseUri = (window as any).vscodeBaseHref;
+    const val = Map.prototype.get.call(this, key);
+    return baseUri + val;
+  };
+
+  // sync text in muya with actual file in extension
   muya.on("json-change", debounce(syncTextEdit));
 };
 
@@ -165,45 +172,47 @@ const updateTextInExtension = (text: string) => {
   muya.setContent(text);
 };
 
-const setupEventListeners = () => {
+const pasteInMuya = (text: string) => {
+  const data = new DataTransfer();
+  data.setData("text/plain", text);
+  const newEvent = new ClipboardEvent("paste", {
+    clipboardData: data,
+    bubbles: true,
+    cancelable: true,
+  });
+  muya.editor.clipboard.pasteHandler(newEvent);
+};
+
+const setupMessageListeners = () => {
   window.addEventListener("message", ({ data: message }: { data: ExtensionMessage }) => {
 		switch (message.type) {
 			case "updateText":
 				updateTextInExtension(message.text);
         return;
       
-      // case "uploadComplete": {
-      //   message.files.forEach((f: string) => {
-      //     if (f.endsWith(".wav")) {
-      //       editor.insertValue(
-      //         `\n\n<audio controls="controls" src="${f}"></audio>\n\n`
-      //       );
-      //     } else {
-      //       const i = new Image();
-      //       i.src = f;
-
-      //       i.onload = () => {
-      //         const { width, height } = configs?.imageDefaultConfig || {};
-      //         const w = width ? `width="${width}"` : "";
-      //         const h = height ? `height="${height}"` : "";
-      //         if (w || h) {
-      //           editor.insertValue(
-      //             `\n\n<img src="${f}" alt="${f.split("/").slice(-1)[0]}" ${w} ${h} />\n\n`,
-      //           );
-      //           return;
-      //         }
-
-      //         // todo: add support for height and width in this syntax -- might need to change lute
-      //         editor.insertValue(`\n\n![](${f})\n\n`);
-      //       };
-            
-      //       i.onerror = () => {
-      //         editor.insertValue(`\n\n[${f.split("/").slice(-1)[0]}](${f})\n\n`);
-      //       };
-      //     }
-      //   });
-      //   break;
-      // }
+      case "uploadComplete": {
+        message.files.forEach((file: any) => {
+          const { path, type } = file;
+          if (type.startsWith("image")) {
+            const i = new Image();
+            i.src = path;
+            i.onload = () => {
+              const { width, height } = configs?.imageDefaultConfig || {};
+              const w = width ? `width="${width}"` : "";
+              const h = height ? `height="${height}"` : "";
+              pasteInMuya(`\n\n<img src="${path}" alt="${path.split("/").slice(-1)[0]}" ${w} ${h} />\n\n`);
+            };
+            i.onerror = () => {
+              pasteInMuya(`\n\n[${path.split("/").slice(-1)[0]}](${path})\n\n`);
+            };
+          } else if (type.startsWith("audio")) {
+            pasteInMuya(`\n\n<audio controls="controls" src="${path}"></audio>\n\n`);
+          } else {
+            pasteInMuya(`\n\n[${path.split("/").slice(-1)[0]}](${path})\n\n`);
+          }
+        });
+        return;
+      }
 		}
 	});
 };
@@ -235,7 +244,52 @@ const setupEventListeners = () => {
 //   };
 // };
 
-// IIAF
+const handleFilePaste = () => {
+  document.querySelector("#editor")?.addEventListener("paste", async (_e: Event) => {
+    const e = _e as ClipboardEvent;
+
+    const filesList = Array.from(e.clipboardData?.files || []);
+    if (!filesList.length) {
+      return;
+    }
+
+    // stop default paste behavior of muya
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+
+    // send file data to extension for upload
+    const files = await Promise.all(
+      filesList.map(async (f) => ({
+        base64: await fileToBase64(f),
+        type: f.type,
+        name: `${getFormattedDate()}_${f.name}`.replace(
+          /[^\w-_.]+/,
+          "_"
+        ),
+      }))
+    );
+    sendMsgToExtension({
+      type: "upload",
+      files,
+    });
+  
+    // Create a new DataTransfer with the custom text
+    // const data = new DataTransfer();
+    // data.setData("text/plain", "Hello World");
+
+    // // Pass a new ClipboardEvent to the pasteHandler
+    // const newEvent = new ClipboardEvent("paste", {
+    //   clipboardData: data,
+    //   bubbles: true,
+    //   cancelable: true,
+    // });
+
+    // muya.editor.clipboard.pasteHandler(newEvent);
+  }, true);
+};
+
+// IIAF -- order of function calls matter
 (() => {
   // fixTextOperations();
   // fixLinkClick();
@@ -244,9 +298,12 @@ const setupEventListeners = () => {
   // Get a reference to the VS Code webview api.
 	// @ts-ignore
   vscode = acquireVsCodeApi();
+  configs = ((window as any)?.extensionConfigs);
+
+
   initMuya();
 
-  // initVditor();
-  // setCSSVars();
-  setupEventListeners();
+  handleFilePaste();
+
+  setupMessageListeners();
 })();

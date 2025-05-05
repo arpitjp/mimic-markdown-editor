@@ -130,6 +130,7 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@arpitjp/muyajs__core": "^0.0.32-0",
     "@muyajs/core": "^0.0.32"
   }
 }

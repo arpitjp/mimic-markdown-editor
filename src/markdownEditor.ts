@@ -102,10 +102,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
       </script>
     </head>
 
-    <body>
-      <div class="editor-container">
-        <div id="editor"></div>
-      </div>
+    <body tabindex="0">
+      <div id="editor"></div>
 
       ${jsFiles.map((f) => `<script type="module" src="${f}"></script>`).join("\n")}
     </body>
@@ -152,10 +150,13 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             })
           );
           const files = message.files.map((f: any) =>
-            path.relative(
+          ({
+            path: path.relative(
               path.dirname(this.#docUri.fsPath),
               path.join(assetsFolder, f.name)
-            ).replace(/\\/g, "/")
+            ).replace(/\\/g, "/"),
+            type: f.type,
+          })
           );
 
           this.#sendMsgToWebView({
