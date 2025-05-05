@@ -85,6 +85,7 @@ const initVditor = () => {
         const files = await Promise.all(
           filesList.map(async (f) => ({
             base64: await fileToBase64(f),
+            type: f.type,
             name: `${getFormattedDate()}_${f.name}`.replace(
               /[^\w-_.]+/,
               "_"
@@ -116,33 +117,31 @@ const setupEventListeners = () => {
         return;
       
       case "uploadComplete": {
-        message.files.forEach((f: string) => {
-          if (f.endsWith(".wav")) {
+        message.files.forEach((file: any) => {
+          const { path, type, name } = file;
+
+          if (type.startsWith("audio")) {
             editor.insertValue(
-              `\n\n<audio controls="controls" src="${f}"></audio>\n\n`
+              `\n\n<audio controls="controls" src="${path}"></audio>\n\n`
             );
-          } else {
+          } else if (type.startsWith("image")) {
             const i = new Image();
-            i.src = f;
+            i.src = path;
 
             i.onload = () => {
               const { width, height } = configs?.imageDefaultConfig || {};
               const w = width ? `width="${width}"` : "";
               const h = height ? `height="${height}"` : "";
-              if (w || h) {
-                editor.insertValue(
-                  `\n\n<img src="${f}" alt="${f.split("/").slice(-1)[0]}" ${w} ${h} />\n\n`,
-                );
-                return;
-              }
-
-              // todo: add support for height and width in this syntax -- might need to change lute
-              editor.insertValue(`\n\n![](${f})\n\n`);
+              editor.insertMD(
+                `\n\n<img src="${path}" ${w} ${h} />\n\n`,
+              );
             };
             
             i.onerror = () => {
-              editor.insertValue(`\n\n[${f.split("/").slice(-1)[0]}](${f})\n\n`);
+              editor.insertValue(`\n\n[${name}](${path})\n\n`);
             };
+          } else {
+            editor.insertValue(`\n\n[${name}](${path})\n\n`);
           }
         });
         break;

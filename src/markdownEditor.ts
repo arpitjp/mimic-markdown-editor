@@ -149,10 +149,14 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             })
           );
           const files = message.files.map((f: any) =>
-            path.relative(
+          ({
+            path: path.relative(
               path.dirname(this.#docUri.fsPath),
               path.join(assetsFolder, f.name)
-            ).replace(/\\/g, "/")
+            ).replace(/\\/g, "/"),
+            name: f.name,
+            type: f.type,
+          })
           );
 
           this.#sendMsgToWebView({
