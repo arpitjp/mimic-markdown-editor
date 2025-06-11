@@ -42,6 +42,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     this.#textDoc = textDoc;
     this.#webviewPanel = webviewPanel;
     this.#docUri = this.#textDoc.uri;
+    debug("us", this.#docUri);
 
     // Setup initial content for the webview
     this.#webviewPanel.webview.options = {
